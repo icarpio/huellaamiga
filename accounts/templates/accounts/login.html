@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in - Huella Amiga</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="wrapper">
+        <div class="container">
+            <!-- Spinner HTML -->
+            <div id="loader" style="display: none;">
+                <div class="loader"></div>
+            </div>
+            <h1><img src="{% static 'logo.png' %}" alt="Logo" width="500" height="100"></h1>
+            <h2>Sign in</h2>
+            <form method="post" id="loginForm">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ form.username.label_tag }}
+                    {{ form.username }}
+                    <div class="error">{{ form.username.errors }}</div>
+                </div>
+
+                <div class="form-group">
+                    {{ form.password.label_tag }}
+                    {{ form.password }}
+                    <div class="error">{{ form.password.errors }}</div>
+                </div>
+
+                <button type="submit">Sign in</button>
+            </form>
+            <br>
+            <!--<a href="#">¿Olvidaste la contraseña?</a>-->
+            <p>Don't have an account?<a href="{% url 'register' %}">Sign up here</a></p>
+            <br>
+            <footer>
+                <p>By logging in, you accept our Terms and Privacy Policy.</p>
+            </footer>
+        </div>
+    </div>
+    <!-- JavaScript para controlar el spinner -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+
+            if (loginForm) {
+                loginForm.addEventListener('submit', function() {
+                    document.getElementById('loader').style.display = 'flex'; // Mostrar el spinner
+                });
+            }
+        });
+    </script>
+    
+</body>
+</html>

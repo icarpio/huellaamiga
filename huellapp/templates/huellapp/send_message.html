@@ -1,0 +1,23 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <title>Enviar Mensaje</title>
+</head>
+<body>
+    <h1>Enviar Mensaje</h1>
+    <form method="post">
+        {% csrf_token %}
+        <textarea name="content" required></textarea>
+        <button type="submit">Enviar</button>
+    </form>
+</body>
+</html>
+
+
+
+
+
