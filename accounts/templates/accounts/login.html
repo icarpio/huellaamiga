@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <div class="wrapper">
-        <div class="container">
+    <div class="container form-container">
+        <div class="form-wrapper">
             <!-- Spinner HTML -->
             <div id="loader" style="display: none;">
                 <div class="loader"></div>
@@ -29,15 +29,14 @@
                     {{ form.password }}
                     <div class="error">{{ form.password.errors }}</div>
                 </div>
-
+                <br>
                 <button type="submit">Sign in</button>
             </form>
             <br>
             <!--<a href="#">¿Olvidaste la contraseña?</a>-->
-            <p>Don't have an account?<a href="{% url 'register' %}">Sign up here</a></p>
-            <br>
+            <p>Don't have an account? <a href="{% url 'register' %}">Sign up here</a></p>
             <footer>
-                <p>By logging in, you accept our Terms and Privacy Policy.</p>
+                <p>By logging in, you accept our <a href="{% url 'terms' %}">Terms and Privacy Policy.</a></p></p>
             </footer>
         </div>
     </div>
@@ -56,3 +55,4 @@
     
 </body>
 </html>
+

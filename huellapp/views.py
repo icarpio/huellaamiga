@@ -1,46 +1,147 @@
 from django.shortcuts import render, redirect
-from .models import Protector, Animal, Messageha
-from .forms import AnimalForm, MessageForm,ProtectorForm
-from django.conf import settings
+from .models import Protector,Conversation
+from .forms import AnimalForm, MessageForm,ProtectorForm,CustomUserEditForm
+from django.contrib.auth import get_user_model
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-
+from django.contrib import messages
+from django.db.models import Q
+@login_required
 def add_animal(request):
     if request.method == 'POST':
-        form = AnimalForm(request.POST)
+        form = AnimalForm(request.POST, request.FILES)
         if form.is_valid():
             animal = form.save(commit=False)
-            animal.protector = request.user.protector  # Asumiendo que el usuario tiene un perfil de protector
+            # Asignar el protector automáticamente al usuario actual
+            animal.protector = Protector.objects.get(user=request.user)  # Obtener el protector del usuario
             animal.save()
-            return redirect('animal_list')
+            return redirect('index')  # Redirigir a la lista de animales (ajusta la URL)
     else:
         form = AnimalForm()
-    return render(request, 'huellapp/add_animal.html', {'form': form})
 
+    return render(request, 'huellapp/add_animal_min.html', {'form': form})
 
-def send_message(request, recipient_id):
+@login_required
+def create_protector(request):
     if request.method == 'POST':
-        content = request.POST.get('content')
-        recipient = settings.AUTH_USER_MODEL.objects.get(id=recipient_id)
-        Messageha.objects.create(sender=request.user, recipient=recipient, content=content)
-        return redirect('inbox')  # Redirige a la bandeja de entrada
-    return render(request, 'huellapp/send_message.html', {'recipient_id': recipient_id})
-
-def inbox(request):
-    messages = Messageha.objects.filter(recipient=request.user).order_by('-timestamp')
-    return render(request, 'huellapp/inbox.html', {'messages': messages})
+        form = ProtectorForm(request.POST, request.FILES)
+        if form.is_valid():
+            protector = form.save(commit=False)
+            protector.user = request.user  # Asignar el usuario actual
+            protector.save()
+            return redirect('index')  # Redirigir al home
+    else:
+        form = ProtectorForm()
+    
+    return render(request, 'huellapp/edit_protector.html', {'form': form})
 
 @login_required
 def edit_protector(request):
-    # Obtener la protectora asociada al usuario
-    protector = get_object_or_404(Protector, user=request.user)
+    # Intentar obtener la protectora asociada al usuario
+    try:
+        protector = Protector.objects.get(user=request.user)
+    except Protector.DoesNotExist:
+        # Si no existe un protector, redirigir a la vista de crear protector
+        return redirect('create_protector')
 
     if request.method == 'POST':
         form = ProtectorForm(request.POST, request.FILES, instance=protector)
         if form.is_valid():
             form.save()
-            return redirect('protector_profile')  # Redirigir a la página de perfil, por ejemplo.
+            return redirect('protector_profile')  # Redirigir a la página de perfil
     else:
         form = ProtectorForm(instance=protector)
-    
     return render(request, 'huellapp/edit_protector.html', {'form': form})
+
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        form = CustomUserEditForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect('profile')  # Redirigir a la página de perfil u otra vista
+    else:
+        form = CustomUserEditForm(instance=request.user)  # Prellenar el formulario con los datos actuales
+
+    return render(request, 'huellapp/edit_profile.html', {'form': form})
+
+
+
+User = get_user_model()
+
+@login_required
+def send_message(request, recipient_id):
+    # Obtener el destinatario (usuario)
+    recipient = get_object_or_404(User, id=recipient_id)
+
+    # Verificar si ya existe una conversación o crear una nueva
+    conversation, created = Conversation.objects.get_or_create(
+        sender=request.user,
+        recipient=recipient
+    )
+
+    if request.method == 'POST':
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.sender = request.user  # Asignar el usuario que envía el mensaje
+            message.conversation = conversation  # Asignar la conversación
+            message.save()  # Guardar el mensaje en la base de datos
+            return redirect('view_conversation', conversation_id=conversation.id)  # Redirigir a la conversación
+    else:
+        form = MessageForm()  # Crear un formulario vacío si no es un POST
+
+    return render(request, 'huellapp/send_message.html', {
+        'form': form,
+        'recipient': recipient
+    })
+
+def inbox(request):
+    # Obtener las conversaciones donde el usuario es remitente o destinatario
+    conversations = Conversation.objects.filter(
+        Q(sender=request.user) | Q(recipient=request.user)
+    ).order_by('-created_at')
+    return render(request, 'huellapp/inbox.html', {'conversations': conversations})
+
+
+User = get_user_model()
+
+@login_required
+def start_conversation(request, recipient_id):
+    # Obtener la protectora (recipient)
+    recipient = get_object_or_404(User, id=recipient_id)
+
+    # Verificar si ya existe una conversación entre el usuario y la protectora
+    conversation, created = Conversation.objects.get_or_create(
+        sender=request.user,
+        recipient=recipient
+    )
+
+    return redirect('view_conversation', conversation_id=conversation.id)
+
+@login_required
+def view_conversation(request, conversation_id):
+    conversation = get_object_or_404(
+        Conversation, 
+        id=conversation_id, 
+        sender=request.user
+    )
+    messages = conversation.messages.all().order_by('timestamp')
+
+    if request.method == 'POST':
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.sender = request.user
+            message.conversation = conversation
+            message.save()
+            return redirect('view_conversation', conversation_id=conversation.id)
+    else:
+        form = MessageForm()
+
+    return render(request, 'huellapp/view_conversation.html', {
+        'conversation': conversation,
+        'messages': messages,
+        'form': form
+    })

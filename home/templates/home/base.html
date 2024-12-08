@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mi Proyecto{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+    <body>
+        <nav class="navbar">
+            <div class="container">
+                <a class="navbar-brand"  href="{% url 'index' %}"><img src="{% static 'logo.png' %}" alt="Logo" width="250 height="30"></a>
+                <div class="navbar-toggle" id="navbarToggle">☰</div>
+                <ul class="navbar-nav" id="navbarNav">
+                    {% if user.protector %}
+                        <!-- Si el usuario tiene un protector asociado, mostrar el enlace de 'edit_protector' -->
+                        <li class="nav-item"><a class="nav-link" href="{% url 'edit_protector' %}">Edit Company</a></li>
+                    {% else %}
+                        <!-- Si no tiene un protector, mostrar el enlace de 'create_protector' -->
+                        <li class="nav-item"><a class="nav-link" href="{% url 'create_protector' %}">Create Company</a></li>
+                    {% endif %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'add_animal' %}">Add Animal</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'edit_profile' %}">Profile</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'inbox' %}">Inbox</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+            </div>
+        </nav>
+    <!-- Contenido principal -->
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Scripts de Bootstrap -->
+    <script>
+        // Script para manejar el toggle del navbar en dispositivos móviles
+        document.getElementById('navbarToggle').addEventListener('click', function() {
+            const navbarNav = document.getElementById('navbarNav');
+            navbarNav.classList.toggle('show');
+        });
+    </script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

@@ -29,3 +29,6 @@ def login_view(request):
 def logout_view(request):
     logout(request)  # Cierra sesión del usuario
     return redirect('login')  # Redirige al login después de cerrar sesión
+
+def terms_and_privacy(request):
+    return render(request, 'accounts/terms.html')

@@ -1,23 +1,21 @@
+{% extends 'home/base.html' %}
 
-{% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="{% static 'css/index.css' %}">
-    <title>Enviar Mensaje</title>
-</head>
-<body>
-    <h1>Enviar Mensaje</h1>
+{% block title %}Send Message{% endblock %}
+
+{% block content %}
+<div class="container form-container">
+  <div class="form-wrapper">
+    <h2>Send Message to {{ recipient.username }}</h2>
     <form method="post">
-        {% csrf_token %}
-        <textarea name="content" required></textarea>
-        <button type="submit">Enviar</button>
+      {% csrf_token %}
+      
+      <div class="mb-3">
+        <label for="message" class="form-label">Message</label>
+        <textarea id="message" name="message" class="form-control" placeholder="Type your message here..." rows="4" required></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Send</button>
     </form>
-</body>
-</html>
-
-
-
-
-
+  </div>
+</div>
+{% endblock %}

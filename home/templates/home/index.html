@@ -1,35 +1,35 @@
-
+{% extends 'home/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <title>Inicio</title>
-</head>
-<body>
+{% block title %}Home{% endblock %}
+{% block content %}
+<div style="width: 100%; max-width: 1200px; margin: 0 auto; padding: 0;">
     <h1>Listado de Animales</h1>
-    <ul>
+    <!-- Listado de Animales -->
+    <ul class="animal-list" style="list-style-type: none; padding: 0; margin: 0;">
         {% for animal in animals %}
-            <li>
-                <strong>Nombre:</strong> {{ animal.name }} <br>
-                <strong>Especie:</strong> {{ animal.species }} <br>
-                <strong>Edad:</strong> {{ animal.age }} años <br>
-                <strong>Descripción:</strong> {{ animal.description }} <br>
-                <strong>Protector:</strong> {{ animal.protector.username }}
+            <li class="animal-item" style="display: flex; flex-wrap: wrap; width: 100%; margin-bottom: 20px; box-sizing: border-box;">
+                <!-- Información del animal -->
+                <div class="animal-info" style="flex: 2; padding-right: 20px; box-sizing: border-box;">
+                    <strong>Nombre:</strong> {{ animal.name }} <br>
+                    <strong>Especie:</strong> {{ animal.species }} <br>
+                    <strong>Edad:</strong> {{ animal.age }} años <br>
+                    <strong>Descripción:</strong> {{ animal.description }} <br>
+                    <strong>Protector:</strong> {{ animal.protector.name }} <br>
+                    <!-- Botón para enviar mensaje -->
+                      <!-- Botón de mensaje con JavaScript para redirigir -->
+                <button onclick="window.location.href='{% url 'send_message' recipient_id=animal.protector.user.id %}'" class="btn btn-primary">
+                    Message
+                </button>
+                </div>
+                <!-- Imagen del animal -->
+                <div class="animal-image" style="flex: 1; max-width: 150px; box-sizing: border-box;">
+                    <img src="{{ animal.image.url }}" alt="{{ animal.name }}" style="width: 100px; height: 100px;" />
+                </div>
             </li>
         {% empty %}
             <li>No hay animales registrados.</li>
         {% endfor %}
     </ul>
+</div>
+{% endblock %}
 
-    {% if form %}
-        <h2>Registrar Nuevo Animal</h2>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Registrar Animal</button>
-        </form>
-    {% endif %}
-</body>
-</html>
