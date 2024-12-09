@@ -9,4 +9,8 @@ urlpatterns = [
     path('create_protector/', create_protector, name='create_protector'),
     path('conversation/<int:conversation_id>/', view_conversation, name='view_conversation'),
     path('send_message/<int:recipient_id>/', send_message, name='send_message'),
+    path('animals/', protector_animals, name='protector_animals'),
+    path('animals/edit/<int:animal_id>/', edit_animal, name='edit_animal'),
 ]
+
+

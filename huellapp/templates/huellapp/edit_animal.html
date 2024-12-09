@@ -1,0 +1,52 @@
+{% extends 'home/base.html' %}
+{% load static %}
+
+{% block title %}Editar Animal: {{ animal.name }}{% endblock %}
+
+{% block content %}
+<div style="width: 100%; max-width: 600px; margin: 20px auto;">
+
+    <h1 style="text-align: center;">Editar: {{ animal.name }}</h1>
+
+    <!-- Mostrar la imagen actual del animal -->
+    <div style="text-align: center; margin-bottom: 20px;">
+        <img src="{{ animal.image.url }}" alt="{{ animal.name }}" style="max-width: 50%; height: auto; border-radius: 8px;">
+    </div>
+
+    <!-- Formulario para editar el animal -->
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Renderizar todos los campos excepto la imagen -->
+        {% for field in form %}
+            {% if field.name != "image" %}
+                <div style="margin-bottom: 20px;">
+                    <label for="{{ field.id_for_label }}" style="display: block; margin-bottom: 8px;">{{ field.label }}</label>
+                    {{ field }}
+                </div>
+            {% endif %}
+        {% endfor %}
+
+        <!-- Campo para cargar una nueva imagen (opcional) -->
+        <div style="text-align: center; margin-top: 20px;">
+            <label for="id_image" style="display: block; margin-bottom: 8px;">Cambiar imagen (opcional):</label>
+            <input type="file" name="image" id="id_image" class="form-control" style="max-width: 100%;">
+        </div>
+
+        <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
+            <!-- Botón Guardar Cambios -->
+            <button type="submit" style="padding: 10px 20px; font-size: 16px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                Guardar Cambios
+            </button>
+
+            <!-- Botón Cancelar dentro de un formulario -->
+            <form method="get" action="{% url 'protector_animals' %}" style="display: inline;">
+                <button type="submit" style="padding: 10px 20px; font-size: 16px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    Cancelar
+                </button>
+            </form>
+        </div>
+    </form>
+
+</div>
+{% endblock %}

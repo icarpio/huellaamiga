@@ -1,0 +1,56 @@
+{% extends 'home/base.html' %}
+{% load static %}
+
+{% block title %}Animales de {{ protector.name }}{% endblock %}
+
+{% block content %}
+<div style="width: 100%; max-width: 1200px; margin: 0 auto; padding: 0;">
+    <div  style="text-align: center;">
+        <h1>Animales de {{ protector.name }}</h1>
+    </div>
+    <br>
+    <ul class="animal-list" style="list-style-type: none; padding: 0; margin: 0;">
+        {% for animal in animals %}
+        <li class="animal-item" style="display: flex; flex-wrap: wrap; width: 100%; margin-bottom: 20px; box-sizing: border-box; align-items: center;">
+            <!-- Información del animal -->
+            <div class="animal-info" style="flex: 2; padding-right: 20px; box-sizing: border-box;">
+                <strong>Nombre:</strong> {{ animal.name }} <br>
+                <strong>Especie:</strong> {{ animal.species }} <br>
+                <strong>Edad:</strong> {{ animal.age }} años <br>
+                <strong>Descripción:</strong> {{ animal.description }} <br>
+            </div>
+            <!-- Imagen del animal -->
+            <div class="animal-image" style="flex: 1; max-width: 150px; box-sizing: border-box;">
+                <img src="{{ animal.image.url }}" alt="{{ animal.name }}" style="width: 100px; height: 100px; border-radius: 8px;" />
+            </div>
+            <!-- Botones de Editar y Eliminar -->
+            <div style="flex: 1; display: flex; justify-content: flex-end; align-items: center; gap: 10px; box-sizing: border-box;">
+                <!-- Botón Editar como un formulario -->
+                <form method="get" action="{% url 'edit_animal' animal.id %}" style="margin: 0;">
+                    <button type="submit" class="btn btn-primary" style="padding: 8px 15px; border-radius: 5px; background-color: #007bff; color: white; border: 1px solid #007bff;">Editar</button>
+                </form>
+        
+                <!-- Botón Eliminar con Confirmación -->
+                <form method="post" action="" style="margin: 0;" onsubmit="return confirmDelete();">
+                    {% csrf_token %}
+                    <input type="hidden" name="animal_id" value="{{ animal.id }}">
+                    <button type="submit" class="btn btn-danger" style="padding: 8px 15px; border-radius: 5px; background-color: #dc3545; color: white; border: 1px solid #dc3545;">Eliminar</button>
+                </form>
+            </div>
+        </li>
+        
+        {% empty %}
+            <li>No tienes animales registrados.</li>
+        {% endfor %}
+    </ul>
+
+
+    {% block extra_scripts %}
+    <script>
+        function confirmDelete() {
+            return confirm("¿Estás seguro de que quieres eliminar este animal?");
+        }
+    </script>
+{% endblock %}
+</div>
+{% endblock %}

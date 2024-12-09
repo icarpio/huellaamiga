@@ -3,8 +3,9 @@
 {% block title %}Home{% endblock %}
 {% block content %}
 <div style="width: 100%; max-width: 1200px; margin: 0 auto; padding: 0;">
-    <h1>Listado de Animales</h1>
-    <!-- Listado de Animales -->
+    <h1 style="text-align: center;">Listado de Animales</h1>
+    <!-- Total de Animales -->
+    <p style="text-align: center;">Total de animales: {{ total_animals }}</p>
     <ul class="animal-list" style="list-style-type: none; padding: 0; margin: 0;">
         {% for animal in animals %}
             <li class="animal-item" style="display: flex; flex-wrap: wrap; width: 100%; margin-bottom: 20px; box-sizing: border-box;">
@@ -15,21 +16,35 @@
                     <strong>Edad:</strong> {{ animal.age }} años <br>
                     <strong>Descripción:</strong> {{ animal.description }} <br>
                     <strong>Protector:</strong> {{ animal.protector.name }} <br>
-                    <!-- Botón para enviar mensaje -->
-                      <!-- Botón de mensaje con JavaScript para redirigir -->
-                <button onclick="window.location.href='{% url 'send_message' recipient_id=animal.protector.user.id %}'" class="btn btn-primary">
-                    Message
-                </button>
+                    <!-- Botón de mensaje -->
+                    <button onclick="window.location.href='{% url 'send_message' recipient_id=animal.protector.user.id %}'" class="btn btn-primary">
+                        Message
+                    </button>
                 </div>
                 <!-- Imagen del animal -->
                 <div class="animal-image" style="flex: 1; max-width: 150px; box-sizing: border-box;">
-                    <img src="{{ animal.image.url }}" alt="{{ animal.name }}" style="width: 100px; height: 100px;" />
+                    <img src="{{ animal.image.url }}" alt="{{ animal.name }}" style="width: 120px; height: 150px;" />
                 </div>
             </li>
         {% empty %}
             <li>No hay animales registrados.</li>
         {% endfor %}
     </ul>
+
+<!-- Paginación -->
+<div class="pagination" style="margin-top: 20px; text-align: center;">
+    <ul style="list-style-type: none; display: inline-flex; gap: 10px; padding: 0; margin: 0; align-items: center;">
+        {% if animals.has_previous %}
+            <li><a href="?page=1" class="btn btn-secondary" style="text-decoration: none; padding: 5px 10px; border-radius: 5px;">Primera</a></li>
+            <li><a href="?page={{ animals.previous_page_number }}" class="btn btn-secondary" style="text-decoration: none; padding: 5px 10px; border-radius: 5px;">Anterior</a></li>
+        {% endif %}
+        <li style="padding: 5px 10px; border-radius: 5px; background-color: #f8f9fa;">Página {{ animals.number }} de {{ animals.paginator.num_pages }}</li>
+        {% if animals.has_next %}
+            <li><a href="?page={{ animals.next_page_number }}" class="btn btn-secondary" style="text-decoration: none; padding: 5px 10px; border-radius: 5px;">Siguiente</a></li>
+            <li><a href="?page={{ animals.paginator.num_pages }}" class="btn btn-secondary" style="text-decoration: none; padding: 5px 10px; border-radius: 5px;">Última</a></li>
+        {% endif %}
+    </ul>
+</div>
+
 </div>
 {% endblock %}
-

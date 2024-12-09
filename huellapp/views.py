@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Protector,Conversation
+from .models import Protector,Conversation, Animal
 from .forms import AnimalForm, MessageForm,ProtectorForm,CustomUserEditForm
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, get_object_or_404, redirect
@@ -145,3 +145,44 @@ def view_conversation(request, conversation_id):
         'messages': messages,
         'form': form
     })
+
+
+@login_required
+def protector_animals(request):
+    # Obtener la protectora asociada al usuario actual
+    protector = get_object_or_404(Protector, user=request.user)
+    # Filtrar los animales asociados a esta protectora
+    animals = Animal.objects.filter(protector=protector)
+
+    if request.method == 'POST':
+        # Manejar eliminación de animales
+        animal_id = request.POST.get('animal_id')
+        if animal_id:
+            animal = get_object_or_404(Animal, id=animal_id, protector=protector)
+            animal.delete()
+            return redirect('protector_animals')
+
+    context = {
+        'protector': protector,
+        'animals': animals,
+    }
+    return render(request, 'huellapp/animals_list.html', context)
+
+@login_required
+def edit_animal(request, animal_id):
+    # Obtener el animal que se quiere editar, asegurándose de que pertenece a la protectora del usuario
+    animal = get_object_or_404(Animal, id=animal_id, protector__user=request.user)
+
+    if request.method == 'POST':
+        form = AnimalForm(request.POST, request.FILES, instance=animal)
+        if form.is_valid():
+            form.save()
+            return redirect('protector_animals')  # Redirigir al listado de animales
+    else:
+        form = AnimalForm(instance=animal)
+
+    context = {
+        'form': form,
+        'animal': animal,
+    }
+    return render(request, 'huellapp/edit_animal.html', context)

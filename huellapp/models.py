@@ -29,6 +29,7 @@ class Animal(models.Model):
     image = CloudinaryField('image', transformation=[
         {'width': 800, 'height': 600, 'crop': 'fill'}
     ], folder='huellamiga/animals/')  
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
