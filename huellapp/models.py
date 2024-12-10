@@ -4,7 +4,7 @@ from cloudinary.models import CloudinaryField
 from django.conf import settings
 
 class Protector(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  
     name = models.CharField(max_length=255)
     location = models.CharField(max_length=255)
     logo = CloudinaryField('image', transformation=[
@@ -33,7 +33,7 @@ class Animal(models.Model):
 
     def __str__(self):
         return self.name
-
+    
 class Conversation(models.Model):
     sender = models.ForeignKey(
         settings.AUTH_USER_MODEL, 
@@ -57,8 +57,7 @@ class Messageha(models.Model):
     conversation = models.ForeignKey(
         Conversation, 
         on_delete=models.CASCADE, 
-        related_name='messages',
-        null=True,  # Hacer que el campo sea nulo temporalmente
+        related_name='messages'
     )
     sender = models.ForeignKey(
         settings.AUTH_USER_MODEL, 

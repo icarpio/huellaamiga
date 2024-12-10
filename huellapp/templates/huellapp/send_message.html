@@ -1,21 +1,26 @@
-{% extends 'home/base.html' %}
-
-{% block title %}Send Message{% endblock %}
+{% extends "home/base.html" %}
 
 {% block content %}
-<div class="container form-container">
-  <div class="form-wrapper">
-    <h2>Send Message to {{ recipient.username }}</h2>
-    <form method="post">
+  <div class="message-container" style="max-width: 600px; margin: 0 auto; padding: 20px;">
+    <!-- Información del destinatario -->
+    <div class="recipient-info" style="margin-bottom: 30px;">
+      <p><strong>Sending message to:</strong></p>
+      {% if protector %}
+        <p><strong>{{ protector.name }}</strong> (Managed by user: <strong>{{ recipient.username }}</strong>)</p>
+      {% else %}
+        <p><strong>{{ recipient.username }}</strong> (User)</p>
+      {% endif %}
+    </div>
+    
+    <!-- Formulario de mensaje -->
+    <form method="post" style="display: flex; flex-direction: column; gap: 15px;">
       {% csrf_token %}
-      
-      <div class="mb-3">
-        <label for="message" class="form-label">Message</label>
-        <textarea id="message" name="message" class="form-control" placeholder="Type your message here..." rows="4" required></textarea>
+      <div class="form-group">
+        {{ form.as_p }}
       </div>
-
-      <button type="submit" class="btn btn-primary">Send</button>
+      <button type="submit" class="btn btn-primary" style="padding: 10px 20px; font-size: 16px; background-color: #007bff; border: none; border-radius: 5px;">
+        Send Message
+      </button>
     </form>
   </div>
-</div>
 {% endblock %}

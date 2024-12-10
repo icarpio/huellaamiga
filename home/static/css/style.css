@@ -341,6 +341,7 @@ form textarea.error {
   }
 
 
+
 /* Mostrar el navbar en pantallas pequeñas */
 @media (max-width: 768px) {
     .navbar-nav {
