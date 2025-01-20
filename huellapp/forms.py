@@ -14,7 +14,6 @@ class MessageForm(forms.ModelForm):
         model = Messageha
         fields = ['content']
         
-
 class ProtectorForm(forms.ModelForm):
     class Meta:
         model = Protector

@@ -51,7 +51,7 @@ def edit_protector(request):
         form = ProtectorForm(request.POST, request.FILES, instance=protector)
         if form.is_valid():
             form.save()
-            return redirect('protector_profile')  # Redirigir a la página de perfil
+            return redirect('protector_animals')  # Redirigir a la página de perfil
     else:
         form = ProtectorForm(instance=protector)
     return render(request, 'huellapp/edit_protector.html', {'form': form})
@@ -63,7 +63,7 @@ def edit_profile(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Profile updated successfully!")
-            return redirect('profile')  # Redirigir a la página de perfil u otra vista
+            return redirect('index')  # Redirigir a la página de perfil u otra vista
     else:
         form = CustomUserEditForm(instance=request.user)  # Prellenar el formulario con los datos actuales
 

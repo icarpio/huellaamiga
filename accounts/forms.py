@@ -2,33 +2,33 @@ from django import forms
 from django.contrib.auth import get_user_model
 
 class CustomUserCreationForm(forms.ModelForm):
+    username = forms.CharField(
+        label="Usuario",
+        widget=forms.TextInput(attrs={'placeholder': 'Username'})
+    )
+    email = forms.EmailField(
+        label="Email",
+        widget=forms.EmailInput(attrs={'placeholder': 'Enter your email'})
+    )
     password1 = forms.CharField(
         label="Password",
         widget=forms.PasswordInput(attrs={'placeholder': 'Password'}),
         help_text="Minimum 8 characters, must include letters and numbers."
     )
     password2 = forms.CharField(
-        label="Confirm Password",
+        label="Confirma Password",
         widget=forms.PasswordInput(attrs={'placeholder': 'Confirm Password'}),
         help_text="Repeat the password to confirm."
     )
-    email = forms.EmailField(
-        label="Email",
-        widget=forms.EmailInput(attrs={
-            'placeholder': 'Enter your email', 
-            'class': 'form-control'  # Agrega clases si usas Bootstrap u otros estilos
-        }),
-        help_text="Please enter a valid email address."
-    )
     is_protector = forms.BooleanField(
         required=False,
-        label="Are you a protector?",
-        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+        label="Soy protectora/asociación"
     )
 
     class Meta:
-        model = get_user_model() 
-        fields = ['username', 'email','password1', 'password2','is_protector']
+        model = get_user_model()
+        fields = ['username', 'email', 'password1', 'password2', 'is_protector']
+
 
     def clean_password2(self):
         password1 = self.cleaned_data.get('password1')

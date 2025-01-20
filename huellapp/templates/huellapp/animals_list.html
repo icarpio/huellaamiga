@@ -4,60 +4,57 @@
 {% block title %}Animales de {{ protector.name }}{% endblock %}
 
 {% block content %}
-<div style="width: 100%; max-width: 1200px; margin: 0 auto; padding: 0;">
-    <div style="text-align: center;">
-       
+<div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0;">
+    <div class="text-center mb-4">
         {% if user.protector %}
-        <h1>Animales de {{ protector.name }}</h1>
-            <button type="submit"
-            class="button button-blue"
-            onclick="window.location.href='{% url 'edit_protector' %}'">
-            Editar
+            <h1>Animales de {{ protector.name }}</h1>
+            <button type="button" class="btn btn-primary" onclick="window.location.href='{% url 'edit_protector' %}'">
+                Editar
             </button>
         {% else %}
             <h1>Registro de protectora/asociación</h1>
-            <button type="submit" 
-            class="button button-red"
-            onclick="window.location.href='{% url 'create_protector' %}'"
-            >Crear</button>
+            <button type="button" class="btn btn-danger" onclick="window.location.href='{% url 'create_protector' %}'">
+                Crear
+            </button>
         {% endif %}
     </div>
-    <br>
-    <ul class="animal-list" style="list-style-type: none; padding: 0; margin: 0;">
-        {% for animal in animals %}
-        <li class="animal-item" style="display: flex; flex-wrap: wrap; width: 100%; margin-bottom: 20px; box-sizing: border-box; align-items: center;">
-            <!-- Información del animal -->
-            <div class="animal-info" style="flex: 2; padding-right: 20px; box-sizing: border-box;">
-                <strong>Nombre:</strong> {{ animal.name }} <br>
-                <strong>Especie:</strong> {{ animal.species }} <br>
-                <strong>Edad:</strong> {{ animal.age }} años <br>
-                <strong>Descripción:</strong> {{ animal.description }} <br>
-            </div>
-            <!-- Imagen del animal -->
-            <div class="animal-image" style="flex: 1; max-width: 150px; box-sizing: border-box;">
-                <img src="{{ animal.image.url }}" alt="{{ animal.name }}" style="width: 100px; height: 100px; border-radius: 8px;" />
-            </div>
-            <!-- Botones de Editar y Eliminar -->
-            <div style="flex: 1; display: flex; justify-content: flex-end; align-items: center; gap: 10px; box-sizing: border-box;">
-                <!-- Botón Editar como un formulario -->
-                <form method="get" action="{% url 'edit_animal' animal.id %}" style="margin: 0;">
-                    <button type="submit" class="btn btn-primary" style="padding: 8px 15px; border-radius: 5px; background-color: #007bff; color: white; border: 1px solid #007bff;">Editar</button>
-                </form>
-        
-                <!-- Botón Eliminar con Confirmación -->
-                <form method="post" action="" style="margin: 0;" onsubmit="return confirmDelete();">
-                    {% csrf_token %}
-                    <input type="hidden" name="animal_id" value="{{ animal.id }}">
-                    <button type="submit" class="btn btn-danger" style="padding: 8px 15px; border-radius: 5px; background-color: #dc3545; color: white; border: 1px solid #dc3545;">Eliminar</button>
-                </form>
-            </div>
-        </li>
-        
-        {% empty %}
-            <li>No tienes animales registrados.</li>
-        {% endfor %}
-    </ul>
 
+    <div class="row">
+        {% for animal in animals %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="{{ animal.image.url }}" alt="{{ animal.name }}" class="card-img-top img-fluid" style="height: 200px; object-fit: contain;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ animal.name }}</h5>
+                    <p class="card-text">
+                        <strong>Especie:</strong> {{ animal.species }} <br>
+                        <strong>Edad:</strong> {{ animal.age }} años <br>
+                        <strong>Descripción:</strong> {{ animal.description }} <br>
+                    </p>
+                    <div class="d-flex justify-content-between">
+                        <!-- Botón Editar como un formulario -->
+                        <form method="get" action="{% url 'edit_animal' animal.id %}" class="m-0">
+                            <button type="submit" class="btn btn-primary">Editar</button>
+                        </form>
+        
+                        <!-- Botón Eliminar con Confirmación -->
+                        <form method="post" action="" class="m-0" onsubmit="return confirmDelete();">
+                            {% csrf_token %}
+                            <input type="hidden" name="animal_id" value="{{ animal.id }}">
+                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-warning" role="alert">
+                    No tienes animales registrados.
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 
     {% block extra_scripts %}
     <script>
@@ -65,6 +62,6 @@
             return confirm("¿Estás seguro de que quieres eliminar este animal?");
         }
     </script>
-{% endblock %}
+    {% endblock %}
 </div>
 {% endblock %}

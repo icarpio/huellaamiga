@@ -15,7 +15,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = False
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
-#ALLOWED_HOSTS = ['*']
+
 
 cloudinary.config(
     cloud_name=os.getenv('CLOUD_NAME'),
