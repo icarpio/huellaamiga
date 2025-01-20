@@ -27,7 +27,7 @@ class Animal(models.Model):
     description = models.TextField()
     protector = models.ForeignKey(Protector, on_delete=models.CASCADE)  # Relación con Protector, no con el usuario
     image = CloudinaryField('image', transformation=[
-        {'width': 800, 'height': 600, 'crop': 'fill'}
+        {'width': 600, 'height': 800, 'crop': 'fill'}
     ], folder='huellamiga/animals/')  
     created_at = models.DateTimeField(auto_now_add=True)
 

@@ -2,16 +2,10 @@
 
 {% block content %}
 <div class="container mt-5">
-  <h1 class="mb-4">Editar Perfil</h1>
+  <h1 class="mb-4">Editar Perfil {{ username }}</h1>
   
   <form method="POST">
       {% csrf_token %}
-      
-      <div class="mb-3">
-          <label for="username" class="form-label">Nombre de usuario</label>
-          <input type="text" id="username" name="username" class="form-control" value="{{ form.username.value|default_if_none:'' }}" required>
-      </div>
-
       <div class="mb-3">
           <label for="email" class="form-label">Correo electrónico</label>
           <input type="email" id="email" name="email" class="form-control" value="{{ form.email.value|default_if_none:'' }}" required>

@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
 from django.core.exceptions import PermissionDenied
+from cloudinary import uploader
+
 
 
 @login_required
@@ -67,7 +69,10 @@ def edit_profile(request):
     else:
         form = CustomUserEditForm(instance=request.user)  # Prellenar el formulario con los datos actuales
 
-    return render(request, 'huellapp/edit_profile.html', {'form': form})
+    # Obtener el nombre del usuario
+    username = request.user.username  # O request.user.get_full_name() si tienes un campo de nombre completo
+
+    return render(request, 'huellapp/edit_profile.html', {'form': form, 'username': username})
 
 
 User = get_user_model()
@@ -117,12 +122,21 @@ def send_message(request, recipient_id):
         'protector': protector,  # Datos de la protectora (si aplica)
     })
 
-
 def inbox(request):
     # Obtener las conversaciones donde el usuario es remitente o destinatario
     conversations = Conversation.objects.filter(
         Q(sender=request.user) | Q(recipient=request.user)
     ).order_by('-created_at')
+
+    # Agregar el nombre de la protectora del receptor en el contexto
+    for conversation in conversations:
+        if conversation.recipient:
+            # Verifica si el receptor tiene una protectora asociada
+            try:
+                conversation.recipient_protector = conversation.recipient.protector.name
+            except Protector.DoesNotExist:
+                conversation.recipient_protector = None  # Si no hay protectora asociada
+
     return render(request, 'huellapp/inbox.html', {'conversations': conversations})
 
 
@@ -146,10 +160,7 @@ def start_conversation(request, recipient_id):
 @login_required
 def view_conversation(request, conversation_id):
     # Obtener la conversación donde el usuario es el sender o recipient
-    conversation = get_object_or_404(
-        Conversation, 
-        id=conversation_id
-    )
+    conversation = get_object_or_404(Conversation, id=conversation_id)
 
     # Verificar si el usuario actual es el sender o el recipient
     if conversation.sender != request.user and conversation.recipient != request.user:
@@ -157,6 +168,12 @@ def view_conversation(request, conversation_id):
 
     # Obtener los mensajes de la conversación ordenados por timestamp
     messages = conversation.messages.all().order_by('timestamp')
+
+    # Obtener el nombre de la protectora asociada al receptor
+    if conversation.recipient.protector:
+        recipient_protector_name = conversation.recipient.protector.name
+    else:
+        recipient_protector_name = None
 
     # Procesar el formulario de mensaje si es POST
     if request.method == 'POST':
@@ -170,12 +187,14 @@ def view_conversation(request, conversation_id):
     else:
         form = MessageForm()
 
-    # Renderizar la conversación con los mensajes y el formulario
+    # Renderizar la conversación con los mensajes, formulario y el nombre de la protectora
     return render(request, 'huellapp/view_conversation.html', {
         'conversation': conversation,
         'messages': messages,
-        'form': form
+        'form': form,
+        'recipient_protector_name': recipient_protector_name  # Pasar el nombre de la protectora al contexto
     })
+
 
 
 
@@ -186,13 +205,20 @@ def protector_animals(request):
     # Filtrar los animales asociados a esta protectora
     animals = Animal.objects.filter(protector=protector)
 
-    if request.method == 'POST':
-        # Manejar eliminación de animales
-        animal_id = request.POST.get('animal_id')
-        if animal_id:
-            animal = get_object_or_404(Animal, id=animal_id, protector=protector)
-            animal.delete()
-            return redirect('protector_animals')
+    animal_id = request.POST.get('animal_id')
+    if animal_id:
+        animal = get_object_or_404(Animal, id=animal_id, protector=protector)
+
+         # Eliminar la imagen de Cloudinary si existe
+        if animal.image:
+            # Eliminar la imagen en Cloudinary usando el public_id
+            uploader.destroy(animal.image.public_id)
+
+        # Eliminar el objeto Animal de la base de datos
+        animal.delete()
+
+        # Redirigir al listado de animales del protector
+        return redirect('protector_animals')
 
     context = {
         'protector': protector,

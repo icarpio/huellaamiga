@@ -7,7 +7,7 @@ def index(request):
     # Get all scores, ordered by score in descending order
     animals_list = Animal.objects.order_by('-created_at')
     # Set up pagination (10 items per page)
-    paginator = Paginator(animals_list, 10)
+    paginator = Paginator(animals_list, 9)
     # Get the current page number from the request
     page = request.GET.get('page', 1)
     

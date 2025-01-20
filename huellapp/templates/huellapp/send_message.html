@@ -1,26 +1,35 @@
 {% extends "home/base.html" %}
 
 {% block content %}
-  <div class="message-container" style="max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div class="container" style="max-width: 600px; margin: 0 auto; padding: 30px;">
     <!-- Información del destinatario -->
-    <div class="recipient-info" style="margin-bottom: 30px;">
-      <p><strong>Sending message to:</strong></p>
-      {% if protector %}
-        <p><strong>{{ protector.name }}</strong> (Managed by user: <strong>{{ recipient.username }}</strong>)</p>
-      {% else %}
-        <p><strong>{{ recipient.username }}</strong> (User)</p>
-      {% endif %}
+    <div class="recipient-info mb-5">
+      <div class="card shadow-sm p-3 mb-4 bg-light rounded">
+        <p class="h4 text-center text-primary"><strong>Sending message to:</strong></p>
+        {% if protector %}
+          <p class="lead text-center"><strong>{{ protector.name }}</strong> <small class="text-muted">(Managed by user: <strong>{{ recipient.username }}</strong>)</small></p>
+        {% else %}
+          <p class="lead text-center"><strong>{{ recipient.username }}</strong> <small class="text-muted">(User)</small></p>
+        {% endif %}
+      </div>
     </div>
     
     <!-- Formulario de mensaje -->
-    <form method="post" style="display: flex; flex-direction: column; gap: 15px;">
-      {% csrf_token %}
-      <div class="form-group">
-        {{ form.as_p }}
-      </div>
-      <button type="submit" class="btn btn-primary" style="padding: 10px 20px; font-size: 16px; background-color: #007bff; border: none; border-radius: 5px;">
-        Send Message
-      </button>
-    </form>
+    <div class="card shadow-sm p-4">
+      <h3 class="text-center text-primary mb-4">Send Your Message</h3>
+      <form method="post">
+        {% csrf_token %}
+        
+        <!-- Campo Texto con alineación vertical -->
+        <div class="form-group mb-4">
+          <textarea name="content" class="form-control" style="width: 100%; min-height: 200px;">{{ form.content.value|default:'' }}</textarea>
+        </div>
+
+        <!-- Botón de envío -->
+        <div class="text-center mt-3">
+          <button type="submit" class="btn btn-lg btn-primary">Send Message</button>
+        </div>
+      </form>
+    </div>
   </div>
 {% endblock %}

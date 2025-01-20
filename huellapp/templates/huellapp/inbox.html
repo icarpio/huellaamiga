@@ -3,27 +3,35 @@
 {% block title %}Inbox{% endblock %}
 
 {% block content %}
-<div class="inbox-container">
+<div class="container mt-5">
   <!-- Título de la bandeja de entrada -->
-  <h2 class="inbox-title">Inbox</h2>
+  <h2 class="text-center mb-4 text-primary">Inbox</h2>
 
   <!-- Tarjeta con las conversaciones -->
-  <div class="inbox-card">
-    <ul class="inbox-list">
+<div class="card shadow-sm">
+  <div class="card-body">
+    <ul class="list-group">
       {% for conversation in conversations %}
-        <li class="inbox-item">
-          <a href="{% url 'view_conversation' conversation.id %}" class="inbox-link">
-            <div class="conversation-info">
-              <strong>Chat with:</strong>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <a href="{% url 'view_conversation' conversation.id %}" class="d-flex w-100 text-decoration-none text-dark">
+            
+            <!-- Mostrar el nombre de la protectora si existe -->
+            <div class="mb-2">
               {% if conversation.sender == user %}
-                {{ conversation.recipient.username }}
+                <!--{{ conversation.recipient.username }}-->
+                {% if conversation.recipient_protector %}
+                  {{ conversation.recipient_protector }}
+                {% endif %}
               {% else %}
                 {{ conversation.sender.username }}
               {% endif %}
             </div>
-            <div class="conversation-meta">
-              <small class="text-muted">Started: {{ conversation.created_at }}</small>
+
+            <!-- Fecha de inicio -->
+            <div class="text-muted">
+              <small> &nbsp;&nbsp;&nbsp;{{ conversation.created_at|date:"F j, Y, g:i a" }}</small>
             </div>
+
           </a>
         </li>
       {% endfor %}
@@ -31,4 +39,7 @@
   </div>
 </div>
 
+</div>
 {% endblock %}
+
+
