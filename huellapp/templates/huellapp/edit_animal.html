@@ -1,52 +1,59 @@
+
+
 {% extends 'home/base.html' %}
 {% load static %}
 
 {% block title %}Editar Animal: {{ animal.name }}{% endblock %}
 
 {% block content %}
-<div style="width: 100%; max-width: 600px; margin: 20px auto;">
 
-    <h1 style="text-align: center;">Editar: {{ animal.name }}</h1>
-
-    <!-- Mostrar la imagen actual del animal -->
-    <div style="text-align: center; margin-bottom: 20px;">
-        <img src="{{ animal.image.url }}" alt="{{ animal.name }}" style="max-width: 50%; height: auto; border-radius: 8px;">
-    </div>
-
-    <!-- Formulario para editar el animal -->
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-
-        <!-- Renderizar todos los campos excepto la imagen -->
-        {% for field in form %}
-            {% if field.name != "image" %}
-                <div style="margin-bottom: 20px;">
-                    <label for="{{ field.id_for_label }}" style="display: block; margin-bottom: 8px;">{{ field.label }}</label>
-                    {{ field }}
+    <body>
+        <div class="container mt-5">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <img src="{{ animal.image.url }}" alt="{{ animal.name }}" style="max-width: 50%; height: auto; border-radius: 8px;">
+            </div>
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4>Editar Animal</h4>
                 </div>
-            {% endif %}
-        {% endfor %}
-
-        <!-- Campo para cargar una nueva imagen (opcional) -->
-        <div style="text-align: center; margin-top: 20px;">
-            <label for="id_image" style="display: block; margin-bottom: 8px;">Cambiar imagen (opcional):</label>
-            <input type="file" name="image" id="id_image" class="form-control" style="max-width: 100%;">
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_name" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="id_name" name="name" value="{{ form.name.value|default_if_none:'' }}">
+                        </div>
+    
+                        <div class="mb-3">
+                            <label for="id_species" class="form-label">Especie</label>
+                            <input type="text" class="form-control" id="id_species" name="species" value="{{ form.species.value|default_if_none:'' }}">
+                        </div>
+    
+                        <div class="mb-3">
+                            <label for="id_age" class="form-label">Edad</label>
+                            <input type="number" class="form-control" id="id_age" name="age" value="{{ form.age.value|default_if_none:'' }}">
+                        </div>
+    
+                        <div class="mb-3">
+                            <label for="id_description" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="id_description" name="description">{{ form.description.value|default_if_none:'' }}</textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_image" class="form-label">Imagen</label>
+                            <input type="file" class="form-control" id="id_image" name="image">
+                        </div>
+                        
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-success">Guardar</button>
+                            <a href="{% url 'protector_animals' %}" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-
-        <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
-            <!-- Botón Guardar Cambios -->
-            <button type="submit" style="padding: 10px 20px; font-size: 16px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                Guardar Cambios
-            </button>
-
-            <!-- Botón Cancelar dentro de un formulario -->
-            <form method="get" action="{% url 'protector_animals' %}" style="display: inline;">
-                <button type="submit" style="padding: 10px 20px; font-size: 16px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                    Cancelar
-                </button>
-            </form>
-        </div>
-    </form>
-
-</div>
+    
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
 {% endblock %}
