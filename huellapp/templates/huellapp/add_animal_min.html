@@ -3,7 +3,7 @@
 {% block content %}
   <div class="container form-container">
     <div class="form-wrapper">
-      <h2>Add a New Animal</h2>
+      <h2>Añadir nuevo Animal</h2>
       <form method="POST" enctype="multipart/form-data" action="">
         {% csrf_token %}
         <div class="mb-3">
@@ -17,8 +17,8 @@
                 <option value="">Selecciona una especie</option>
                 <option value="perro">Perro</option>
                 <option value="gato">Gato</option>
-                <option value="roedor">Roedor</option>
-                <option value="reptil">Reptil</option>
+                <!--<option value="roedor">Roedor</option>-->
+                <!--<option value="reptil">Reptil</option>-->
             </select>
         </div>
 

@@ -5,8 +5,22 @@
 
 {% block content %}
 <div style="width: 100%; max-width: 1200px; margin: 0 auto; padding: 0;">
-    <div  style="text-align: center;">
+    <div style="text-align: center;">
+       
+        {% if user.protector %}
         <h1>Animales de {{ protector.name }}</h1>
+            <button type="submit"
+            class="button button-blue"
+            onclick="window.location.href='{% url 'edit_protector' %}'">
+            Editar
+            </button>
+        {% else %}
+            <h1>Registro de protectora/asociación</h1>
+            <button type="submit" 
+            class="button button-red"
+            onclick="window.location.href='{% url 'create_protector' %}'"
+            >Crear</button>
+        {% endif %}
     </div>
     <br>
     <ul class="animal-list" style="list-style-type: none; padding: 0; margin: 0;">

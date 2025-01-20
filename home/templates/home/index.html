@@ -17,9 +17,11 @@
                     <strong>Descripción:</strong> {{ animal.description }} <br>
                     <strong>Protector:</strong> {{ animal.protector.name }} <br>
                     <!-- Botón de mensaje -->
-                    <button onclick="window.location.href='{% url 'send_message' recipient_id=animal.protector.user.id %}'" class="btn btn-primary">
-                        Message
-                    </button>
+                    {% if not user.is_protector %}
+                    <a href="{% url 'send_message' recipient_id=animal.protector.user.id %}">
+                        <img src="{% static 'img/chat.png' %}" alt="Message" style="width: 40px; height: 40px; cursor: pointer;">
+                    </a>                    
+                    {% endif %}
                 </div>
                 <!-- Imagen del animal -->
                 <div class="animal-image" style="flex: 1; max-width: 150px; box-sizing: border-box;">
